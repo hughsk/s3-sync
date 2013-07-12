@@ -1,0 +1,34 @@
+{
+  "name": "s3-sync",
+  "version": "0.0.0",
+  "description": "A streaming upload tool for Amazon S3",
+  "main": "index.js",
+  "dependencies": {
+    "map-stream": "0.0.2",
+    "queue-async": "~1.0.4",
+    "through": "~2.3.4",
+    "crypto": "0.0.3",
+    "mime": "~1.2.9",
+    "backoff": "~2.3.0",
+    "xtend": "~2.0.6",
+    "knox": "~0.8.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hughsk/s3-sync.git"
+  },
+  "keywords": [
+    "stream",
+    "s3",
+    "upload",
+    "sync",
+    "directory"
+  ],
+  "author": "Hugh Kennedy <hughskennedy@gmail.com> (http://hughskennedy.com/)",
+  "license": "MIT",
+  "readmeFilename": "README.md"
+}
