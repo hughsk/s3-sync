@@ -12,6 +12,12 @@ You can use this to sync complete directory trees with S3 when deploying static
 websites. It's a work in progress, so expect occasional API changes and
 additional features.
 
+## Installation ##
+
+``` bash
+npm install s3-sync
+```
+
 ## Usage ##
 
 ### `require('s3-sync').createStream([db, ]options)` ###
