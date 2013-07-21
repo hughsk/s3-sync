@@ -11,7 +11,9 @@
     "mime": "~1.2.9",
     "backoff": "~2.3.0",
     "xtend": "~2.0.6",
-    "knox": "~0.8.3"
+    "knox": "~0.8.3",
+    "event-stream": "3.0.16",
+    "level": "0.10.0"
   },
   "devDependencies": {},
   "scripts": {

@@ -1,8 +1,10 @@
 var createQueue = require('queue-async')
   , through = require('through')
   , backoff = require('backoff')
+  , es = require('event-stream')
   , map = require('map-stream')
   , crypto = require('crypto')
+  , level = require('level')
   , xtend = require('xtend')
   , mime = require('mime')
   , knox = require('knox')
@@ -13,13 +15,14 @@ module.exports = s3syncer
 
 function s3syncer(db, options) {
   if (!options) {
-    options = db
-    db = false
+    options = db || {}
+    db = level(__dirname + '/.db')
   }
 
-  options = options || {}
   options.concurrency = options.concurrency || 16
   options.headers = options.headers || {}
+  options.cacheSrc = options.cacheSrc || __dirname + '/.sync'
+  options.cacheDest = options.cacheDest || '/.sync'
 
   var client = knox.createClient(options)
     , queue = createQueue(options.concurrency)
@@ -38,6 +41,9 @@ function s3syncer(db, options) {
       })
     }, data)
   })
+
+  stream.getCache = getCache
+  stream.putCache = putCache
 
   function syncFile(details, next) {
     var absolute = details.fullPath
@@ -108,6 +114,32 @@ function s3syncer(db, options) {
         off.backoff()
       })
     }).backoff()
+  }
+
+  function getCache(callback) {
+    client.getFile(options.cacheDest, function(err, res) {
+      if (err) return callback(new Error(err))
+      if (res.statusCode === 404) return callback(null)
+      res.pipe(es.split())
+        .pipe(es.parse())
+        .pipe(db.createWriteStream())
+        .once('error', function(err) {
+          return callback(new Error(err))
+        })
+        .once('end', callback)
+    })
+  }
+
+  function putCache(callback) {
+    db.createReadStream()
+      .pipe(es.stringify())
+      .pipe(fs.createWriteStream(options.cacheSrc))
+      .once('error', function(err) {
+        return callback(new Error(err))
+      })
+      .once('close', function() {
+        client.putFile(options.cacheSrc, options.cacheDest, callback)
+      })
   }
 
   return stream
