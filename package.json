@@ -4,16 +4,17 @@
   "description": "A streaming upload tool for Amazon S3",
   "main": "index.js",
   "dependencies": {
-    "map-stream": "0.0.2",
     "queue-async": "~1.0.4",
-    "through": "~2.3.4",
     "crypto": "0.0.3",
     "mime": "~1.2.9",
     "backoff": "~2.3.0",
     "xtend": "~2.0.6",
     "knox": "~0.8.3",
     "event-stream": "3.0.16",
-    "level": "0.10.0"
+    "once": "~1.1.1"
+  },
+  "peerDependencies": {
+    "level": "0.x.x"
   },
   "devDependencies": {},
   "scripts": {

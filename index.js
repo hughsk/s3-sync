@@ -1,12 +1,10 @@
 var createQueue = require('queue-async')
-  , through = require('through')
   , backoff = require('backoff')
   , es = require('event-stream')
-  , map = require('map-stream')
   , crypto = require('crypto')
-  , level = require('level')
   , xtend = require('xtend')
   , mime = require('mime')
+  , once = require('once')
   , knox = require('knox')
   , url = require('url')
   , fs = require('fs')
@@ -16,7 +14,7 @@ module.exports = s3syncer
 function s3syncer(db, options) {
   if (!options) {
     options = db || {}
-    db = level(__dirname + '/.db')
+    db = false
   }
 
   options.concurrency = options.concurrency || 16
@@ -31,7 +29,7 @@ function s3syncer(db, options) {
     , subdomain = region ? 's3-' + region : 's3'
     , protocol = secure ? 'https' : 'http'
 
-  var stream = map(function(data, next) {
+  var stream = es.map(function(data, next) {
     queue.defer(function(details, done) {
       details.fullPath = details.fullPath || details.src
       details.path = details.path || details.dest
@@ -78,6 +76,7 @@ function s3syncer(db, options) {
 
     function checkForUpload(next) {
       client.headFile(relative, function(err, res) {
+        if (err) return next(err)
         if (res.statusCode === 404 || res.headers.etag !== '"' + details.md5 + '"') return uploadFile(details, next)
         if (res.statusCode >= 300) return next(new Error('Bad status code: ' + res.statusCode))
         return next(null, details)
@@ -117,29 +116,35 @@ function s3syncer(db, options) {
   }
 
   function getCache(callback) {
+    callback = once(callback)
+
     client.getFile(options.cacheDest, function(err, res) {
-      if (err) return callback(new Error(err))
+      if (err) return callback(err)
       if (res.statusCode === 404) return callback(null)
-      res.pipe(es.split())
-        .pipe(es.parse())
-        .pipe(db.createWriteStream())
-        .once('error', function(err) {
-          return callback(new Error(err))
-        })
-        .once('end', callback)
+
+      es.pipeline(
+          res
+        , es.split()
+        , es.parse()
+        , db.createWriteStream()
+      ).once('close', callback)
+       .once('error', callback)
     })
   }
 
   function putCache(callback) {
+    callback = once(callback)
+
     db.createReadStream()
       .pipe(es.stringify())
       .pipe(fs.createWriteStream(options.cacheSrc))
-      .once('error', function(err) {
-        return callback(new Error(err))
-      })
+      .once('error', callback)
       .once('close', function() {
-        client.putFile(options.cacheSrc, options.cacheDest, callback)
-      })
+        client.putFile(options.cacheSrc, options.cacheDest, function(err) {
+          if (err) return callback(err)
+          fs.unlink(options.cacheSrc, callback)
+        })
+     })
   }
 
   return stream
