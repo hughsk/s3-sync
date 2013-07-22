@@ -34,6 +34,13 @@ The following are also specific to s3-sync:
 * `concurrency`: The maximum amount of files to upload concurrently.
 * `headers`: Additional headers to include on each file.
 
+You can also store your local cache in S3, provided you pass the following
+options, and use `getCache` and `putCache` (see below) before/after uploading:
+
+* `cacheDest`: the path to upload your cache backup to in S3.
+* `cacheSrc`: the local, temporary, text file to stream to before uploading to
+  S3.
+
 If you want more control over the files and their locations that you're
 uploading, you can write file objects directly to the stream, e.g.:
 
@@ -60,6 +67,15 @@ upload the file to on the S3 bucket.
 
 `db` is an optional argument - pass it a *level* database and it'll keep a
 local cache of file hashes, keeping S3 requests to a minimum.
+
+### `stream.putCache(callback)` ###
+
+Uploads your level cache, if available, to the S3 bucket. This means that your
+cache only needs to be populated once.
+
+### `stream.getCache(callback)` ###
+
+Streams a previously uploaded cache from S3 to your local level database.
 
 ## Example ##
 
@@ -93,3 +109,6 @@ var uploader = s3sync(db, {
 
 files.pipe(uploader)
 ```
+
+You can find another example which includes remote cache storage at
+[example.js](https://github.com/hughsk/s3-sync/blob/master/example.js).
