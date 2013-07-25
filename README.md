@@ -77,6 +77,11 @@ cache only needs to be populated once.
 
 Streams a previously uploaded cache from S3 to your local level database.
 
+### `stream.on('fail', callback)` ###
+
+Emitted when a file has failed to upload. This will be called each time the
+file is attempted to be uploaded.
+
 ## Example ##
 
 Here's an example using `level` and `readdirp` to upload a local directory to

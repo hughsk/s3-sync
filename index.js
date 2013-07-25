@@ -110,6 +110,7 @@ function s3syncer(db, options) {
         }
 
         lasterr = err
+        stream.emit('fail', err)
         off.backoff()
       })
     }).backoff()
