@@ -148,20 +148,23 @@ function s3syncer(db, options) {
      })
   }
 
+  function hashFile(filename, callback) {
+    var hash = crypto.createHash('md5')
+      , done = false
+
+    hash.update(JSON.stringify(options.headers))
+
+    fs.createReadStream(filename).on('data', function(d) {
+      hash.update(d)
+    }).once('error', function(err) {
+      if (!done) callback(err)
+      done = true
+    }).once('close', function() {
+      if (!done) callback(null, hash.digest('hex'))
+      done = true
+    })
+  }
+
   return stream
 }
 
-function hashFile(filename, callback) {
-  var hash = crypto.createHash('md5')
-    , done = false
-
-  fs.createReadStream(filename).on('data', function(d) {
-    hash.update(d)
-  }).once('error', function(err) {
-    if (!done) callback(err)
-    done = true
-  }).once('close', function() {
-    if (!done) callback(null, hash.digest('hex'))
-    done = true
-  })
-}
