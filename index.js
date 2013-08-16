@@ -152,7 +152,11 @@ function s3syncer(db, options) {
     var hash = crypto.createHash('md5')
       , done = false
 
-    hash.update(JSON.stringify(options.headers))
+    hash.update(JSON.stringify([
+        options.headers
+      , options.bucket
+      , options.region
+    ]))
 
     fs.createReadStream(filename).on('data', function(d) {
       hash.update(d)
