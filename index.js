@@ -45,13 +45,18 @@ function s3syncer(db, options) {
 
   function syncFile(details, next) {
     var absolute = details.fullPath
-      , relative = details.path
-      , destination = url.resolve(
-        protocol + '://' + subdomain + '.amazonaws.com/' + options.bucket + '/'
-      , details.path
-      )
+      , relative = details.path.charAt(0) === '/'
+        ? details.path.slice(1)
+        : details.path
 
-    hashFile(absolute, function(err, md5) {
+    var destination =
+          protocol + '://'
+        + subdomain
+        + '.amazonaws.com/'
+        + options.bucket
+        + '/' + relative
+
+    hashFile(absolute, destination, function(err, md5) {
       if (err) return next(err)
       details.md5 = md5
       details.url = destination
@@ -148,14 +153,13 @@ function s3syncer(db, options) {
      })
   }
 
-  function hashFile(filename, callback) {
+  function hashFile(filename, destination, callback) {
     var hash = crypto.createHash('md5')
       , done = false
 
     hash.update(JSON.stringify([
         options.headers
-      , options.bucket
-      , options.region
+      , destination
     ]))
 
     fs.createReadStream(filename).on('data', function(d) {
