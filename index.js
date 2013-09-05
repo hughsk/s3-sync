@@ -28,6 +28,9 @@ function s3syncer(db, options) {
     , secure = options.secure || !('secure' in options)
     , subdomain = region ? 's3-' + region : 's3'
     , protocol = secure ? 'https' : 'http'
+    , hashkey = options.hashKey || function(details) {
+      return details.fullPath
+    }
 
   var stream = es.map(function(data, next) {
     queue.defer(function(details, done) {
@@ -65,7 +68,7 @@ function s3syncer(db, options) {
 
       if (!db) return checkForUpload(next)
 
-      var key = 'md5:' + absolute
+      var key = 'md5:' + hashkey(details)
 
       db.get(key, function(err, result) {
         if (!err && result === md5) {

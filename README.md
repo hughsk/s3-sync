@@ -33,6 +33,9 @@ The following are also specific to s3-sync:
 
 * `concurrency`: The maximum amount of files to upload concurrently.
 * `headers`: Additional headers to include on each file.
+* `hashKey`: By default, file hashes are stored based on the file's absolute
+  path. This doesn't work very nicely with temporary files, so you can pass
+  this function in to map the file object to a string key for the hash.
 
 You can also store your local cache in S3, provided you pass the following
 options, and use `getCache` and `putCache` (see below) before/after uploading:
