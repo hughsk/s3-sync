@@ -111,6 +111,7 @@ var uploader = s3sync(db, {
   , secret: process.env.AWS_SECRET_KEY
   , bucket: 'sync-testing'
   , concurrency: 16
+  , prefix : "mysubfolder/" //optional prefix to add all files
 }).on('data', function(file) {
   console.log(file.fullPath + ' -> ' + file.url)
 })

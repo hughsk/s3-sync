@@ -28,6 +28,7 @@ function s3syncer(db, options) {
     , secure = options.secure || !('secure' in options)
     , subdomain = region ? 's3-' + region : 's3'
     , protocol = secure ? 'https' : 'http'
+    , prefix = options.prefix || ""
     , hashkey = options.hashKey || function(details) {
       return details.fullPath
     }
@@ -57,7 +58,7 @@ function s3syncer(db, options) {
         + subdomain
         + '.amazonaws.com/'
         + options.bucket
-        + '/' + relative
+        + '/' + prefix + relative
 
     hashFile(absolute, destination, function(err, md5) {
       if (err) return next(err)
