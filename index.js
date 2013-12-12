@@ -37,7 +37,6 @@ function s3syncer(db, options) {
     queue.defer(function(details, done) {
       details.fullPath = details.fullPath || details.src
       details.path = details.path || details.dest
-
       syncFile(details, function(err) {
         return err ? next(err) : done(), next(null, details)
       })
@@ -49,16 +48,16 @@ function s3syncer(db, options) {
 
   function syncFile(details, next) {
     var absolute = details.fullPath
-      , relative = details.path.charAt(0) === '/'
+      , relative = prefix + (details.path.charAt(0) === '/'
         ? details.path.slice(1)
-        : details.path
+        : details.path)
 
     var destination =
           protocol + '://'
         + subdomain
         + '.amazonaws.com/'
         + options.bucket
-        + '/' + prefix + relative
+        + '/' + relative
 
     hashFile(absolute, destination, function(err, md5) {
       if (err) return next(err)
@@ -99,7 +98,7 @@ function s3syncer(db, options) {
 
   function uploadFile(details, next) {
     var absolute = details.fullPath
-      , relative = details.path
+      , relative = prefix + details.path
       , lasterr
       , off = backoff.fibonacci({
         initialDelay: 1000
