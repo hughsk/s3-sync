@@ -28,7 +28,7 @@ function s3syncer(db, options) {
     , secure = options.secure || !('secure' in options)
     , subdomain = region ? 's3-' + region : 's3'
     , protocol = secure ? 'https' : 'http'
-    , prefix = options.prefix || ""
+    , prefix = options.prefix || ''
     , hashkey = options.hashKey || function(details) {
       return details.fullPath
     }
