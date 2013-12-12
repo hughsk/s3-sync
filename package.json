@@ -1,6 +1,6 @@
 {
   "name": "s3-sync",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A streaming upload tool for Amazon S3",
   "main": "index.js",
   "dependencies": {
