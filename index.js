@@ -111,7 +111,7 @@ function s3syncer(db, options) {
       next(lasterr || new Error('unknown error'))
     }).on('ready', function() {
       var headers = xtend({
-          'x-amz-acl': 'public-read-write'
+          'x-amz-acl': 'public-read'
         , 'x-amz-meta-syncfilehash': details.md5
         , 'Content-Type': mime.lookup(absolute)
       }, options.headers)
@@ -183,4 +183,3 @@ function s3syncer(db, options) {
 
   return stream
 }
-
