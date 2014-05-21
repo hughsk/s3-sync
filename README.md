@@ -32,6 +32,7 @@ so at a minimum you'll need:
 The following are also specific to s3-sync:
 
 * `concurrency`: The maximum amount of files to upload concurrently.
+* `retries`: The maximum number of times to retry uploading a file before failing. By default the value is 7.
 * `headers`: Additional headers to include on each file.
 * `hashKey`: By default, file hashes are stored based on the file's absolute
   path. This doesn't work very nicely with temporary files, so you can pass
