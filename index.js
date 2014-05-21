@@ -21,6 +21,7 @@ function s3syncer(db, options) {
   options.headers = options.headers || {}
   options.cacheSrc = options.cacheSrc || __dirname + '/.sync'
   options.cacheDest = options.cacheDest || '/.sync'
+  options.retries = options.retries || 7;
 
   var client = knox.createClient(options)
     , queue = createQueue(options.concurrency)
@@ -106,7 +107,7 @@ function s3syncer(db, options) {
 
     details.fresh = true
 
-    off.failAfter(7)
+    off.failAfter(options.retries)
     off.on('fail', function() {
       next(lasterr || new Error('unknown error'))
     }).on('ready', function() {
