@@ -88,7 +88,6 @@ function s3syncer(db, options) {
         if (err) return next(err)
         if (
           res.statusCode === 404 || (
-          res.headers['x-amz-meta-syncfilehash'] &&
           res.headers['x-amz-meta-syncfilehash'] !== details.md5
         )) return uploadFile(details, next)
         if (res.statusCode >= 300) return next(new Error('Bad status code: ' + res.statusCode))
