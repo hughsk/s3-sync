@@ -54,6 +54,8 @@ function s3syncer(db, options) {
         ? details.path.slice(1)
         : details.path)
 
+    relative = relative.replace(/\\/g, '/')
+
     var destination =
           protocol + '://'
         + subdomain
@@ -105,6 +107,7 @@ function s3syncer(db, options) {
         initialDelay: 1000
       })
 
+    relative = relative.replace(/\\/g, '/')
     details.fresh = true
 
     off.failAfter(options.retries)
