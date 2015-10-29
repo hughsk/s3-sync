@@ -21,8 +21,8 @@ function s3syncer(db, options) {
   options.headers = options.headers || {}
   options.cacheSrc = options.cacheSrc || __dirname + '/.sync'
   options.cacheDest = options.cacheDest || '/.sync'
-  options.retries = options.retries || 7;
-  options.acl = options.acl || 'public-read';
+  options.retries = options.retries || 7
+  options.acl = options.acl || 'public-read'
 
   var client = knox.createClient(options)
     , queue = createQueue(options.concurrency)
