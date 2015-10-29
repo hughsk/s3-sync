@@ -37,6 +37,8 @@ The following are also specific to s3-sync:
 * `hashKey`: By default, file hashes are stored based on the file's absolute
   path. This doesn't work very nicely with temporary files, so you can pass
   this function in to map the file object to a string key for the hash.
+* `acl`: Use a custom [ACL header](http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html). Defaults to `public-read`.
+* `force`: Force s3-sync to overwrite any existing files.
 
 You can also store your local cache in S3, provided you pass the following
 options, and use `getCache` and `putCache` (see below) before/after uploading:
