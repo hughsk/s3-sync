@@ -22,6 +22,7 @@ function s3syncer(db, options) {
   options.cacheSrc = options.cacheSrc || __dirname + '/.sync'
   options.cacheDest = options.cacheDest || '/.sync'
   options.retries = options.retries || 7;
+  options.acl = options.acl || 'public-read';
 
   var client = knox.createClient(options)
     , queue = createQueue(options.concurrency)
@@ -111,7 +112,7 @@ function s3syncer(db, options) {
       next(lasterr || new Error('unknown error'))
     }).on('ready', function() {
       var headers = xtend({
-          'x-amz-acl': 'public-read'
+          'x-amz-acl': options.acl
         , 'x-amz-meta-syncfilehash': details.md5
         , 'Content-Type': mime.lookup(absolute)
       }, options.headers)
