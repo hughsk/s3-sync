@@ -1,4 +1,5 @@
-var createQueue = require('queue-async')
+var LevelWriteStream = require('level-write-stream')
+  , createQueue = require('queue-async')
   , backoff = require('backoff')
   , es = require('event-stream')
   , crypto = require('crypto')
@@ -146,7 +147,7 @@ function s3syncer(db, options) {
           res
         , es.split()
         , es.parse()
-        , db.createWriteStream()
+        , LevelWriteStream(db)()
       ).once('close', callback)
        .once('error', callback)
     })
